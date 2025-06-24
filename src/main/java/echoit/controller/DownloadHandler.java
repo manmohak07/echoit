@@ -27,12 +27,12 @@ public class DownloadHandler implements HttpHandler {
         }
 
         String path = exchange.getRequestURI().getPath();
-        String portString = path.substring(path.lastIndexOf('/' + 1));
+        String portString = path.substring(path.lastIndexOf('/') + 1);
 
         try {
             int port = Integer.parseInt(portString);
 
-            try (Socket socket = new Socket("localhost", port)) {
+            try (Socket socket = new Socket("127.0.0.1", port)) {
                 InputStream socketInput = socket.getInputStream();
                 File temp = File.createTempFile("download", ".tmp");
                 String fileName = "downloaded-file";
@@ -62,7 +62,7 @@ public class DownloadHandler implements HttpHandler {
                             fileOutputStream.write(buffer, 0, byteRead);
                         }
                     }
-                    headers.add("Content-Disposition: ", "attachment: filename=\"" + fileName + "\"");
+                    headers.add("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
                     headers.add("Content-Type", "application/octet-stream");
                     exchange.sendResponseHeaders(200, temp.length());
 

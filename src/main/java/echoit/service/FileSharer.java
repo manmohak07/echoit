@@ -47,14 +47,14 @@ public class FileSharer {
         }
 
         // If DNE, then start sending using a TC block
-        try (ServerSocket serverSocket = new ServerSocket(portNo)) {
+        try (ServerSocket serverSocket = new ServerSocket(portNo, 50)) {
             assert file1 != null;
             System.out.println("Serving file " + new File(file1).getName() + " on port " + portNo);
             Socket clientSocket = serverSocket.accept();
             System.out.println("Client " + clientSocket.getInetAddress());
             new Thread(new FileSenderHandler(clientSocket, file1)).start();
         } catch (IOException e) {
-            System.err.println("Error handling file on " + portNo);
+            System.err.println("Error handling file on " + portNo + ": " + e.getMessage());
         }
 
     }

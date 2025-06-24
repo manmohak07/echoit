@@ -79,7 +79,7 @@ public class FileController {
             Headers headers = exchange.getResponseHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
 
-            if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+            if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
                 String response = "Method not allowed";
                 exchange.sendResponseHeaders(405, response.getBytes().length);
 
@@ -92,7 +92,7 @@ public class FileController {
             Headers requestHeaders = exchange.getRequestHeaders();
             String contentType = requestHeaders.getFirst("Content-Type");
 
-            if (contentType == null || contentType.startsWith("multipart/form-data")) {
+            if (contentType == null || !contentType.startsWith("multipart/form-data")) {
                 String response = "Bad request: Content-Type must be multipart/form-data";
                 exchange.sendResponseHeaders(400, response.getBytes().length);
 
@@ -134,7 +134,7 @@ public class FileController {
                 }
 
                 int port = fileSharer.offerFile(filePath);
-                new Thread(() -> fileSharer.startFileServer(port));
+                new Thread(() -> fileSharer.startFileServer(port)).start();
 
                 String jsonResponse = "{\"port\": " + port + "}";
                 headers.add("Content-Type", "application/json");
