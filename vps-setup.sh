@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# PeerLink VPS Setup Script
-# This script helps set up PeerLink on a fresh Ubuntu/Debian VPS
+# Echoit VPS Setup Script
+# This script helps set up Echoit on a fresh Ubuntu/Debian VPS
 
 # Exit on error
 set -e
 
-echo "=== PeerLink VPS Setup Script ==="
-echo "This script will install Java, Node.js, Nginx, and set up PeerLink."
+echo "=== Echoit VPS Setup Script ==="
+echo "This script will install Java, Node.js, Nginx, and set up Echoit."
 
 # Update system
 echo "Updating system packages..."
@@ -138,7 +138,7 @@ pm2 startup
 # Follow the instructions printed by the above command
 
 echo "=== Setup Complete ==="
-echo "PeerLink is now running on your VPS!"
+echo "Echoit is now running on your VPS!"
 echo "Backend API: http://localhost:8080 (Internal - accessed via Nginx)"
 echo "Frontend: http://your_lightsail_public_ip (Access via your instance's IP address)"
 echo "You can access your application using your Lightsail instance's public IP address in your browser."
