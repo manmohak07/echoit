@@ -27,6 +27,7 @@ public class DownloadHandler implements HttpHandler {
         }
 
         String path = exchange.getRequestURI().getPath();
+        // String portString = path.substring(path.lastIndexOf('/') + 1);
         String portString = path.substring(path.lastIndexOf('/') + 1);
 
         try {
