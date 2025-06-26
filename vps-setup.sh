@@ -121,7 +121,8 @@ fi
 echo "Starting backend with PM2..."
 # Ensure all dependencies are in the classpath
 CLASSPATH="target/echoit-1.0-SNAPSHOT.jar:$(mvn dependency:build-classpath -DincludeScope=runtime -Dmdep.outputFile=/dev/stdout -q)"
-pm2 start --name echoit-backend java -- -cp "$CLASSPATH" echoit.App
+# pm2 start --name echoit-backend java -- -cp "$CLASSPATH" echoit.App
+pm2 start --name echoit-backend java -- -jar target/echoit-1.0.0.jar
 
 # Start frontend with PM2
 echo "Starting frontend with PM2..."
