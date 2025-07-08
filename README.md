@@ -3,6 +3,8 @@ Echoit
 
 A lightweight Spring Boot-based file sharing application that allows you to share files up to 10KB with anyone, anywhere. Perfect for quick peer-to-peer file transfers.
 
+Link: https://tinyurl.com/3k7p5pfc
+
 Features
 --------
 
