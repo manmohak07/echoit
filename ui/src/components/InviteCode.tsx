@@ -7,10 +7,12 @@ interface InviteCodeProps {
   port: number | null;
   timeLeft: number;
   sessionExpired: boolean;
+  pin: number | null;
 }
 
 export default function InviteCode({
   port,
+  pin,
   timeLeft,
   sessionExpired,
 }: InviteCodeProps) {
@@ -86,17 +88,24 @@ export default function InviteCode({
         <div className="flex-1 bg-white p-3 rounded-l-md border border-r-0 border-gray-300 font-mono text-lg">
           {port}
         </div>
-        <button
-          onClick={copyToClipboard}
-          className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-r-md transition-colors"
-          aria-label="Copy invite code"
-        >
-          {copied ? (
-            <FiCheck className="w-5 h-5" />
-          ) : (
-            <FiCopy className="w-5 h-5" />
-          )}
+        <button onClick={copyToClipboard} className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-r-md transition-colors" aria-label="Copy invite code">
+          {copied ? <FiCheck className="w-5 h-5" /> : <FiCopy className="w-5 h-5" />}
         </button>
+      </div>
+      
+      {/* PIN section — separate block below */}
+      <div className="mt-4 pt-4 border-t border-green-200">
+        <p className="text-sm text-green-600 mb-2">
+          <span className="font-medium">PIN (share this too):</span> Your recipient needs this to download.
+        </p>
+        <div className="flex items-center gap-2">
+          <div className="bg-white px-4 py-2 rounded-md border border-gray-300 font-mono text-xl font-bold tracking-widest text-gray-800">
+            {pin ?? '----'}
+          </div>
+          <button onClick={() => { if (pin) navigator.clipboard.writeText(pin.toString()); }} className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors" aria-label="Copy PIN">
+            <FiCopy className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       <p className="mt-3 text-xs text-gray-500">
