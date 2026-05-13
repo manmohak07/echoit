@@ -4,14 +4,15 @@ import { useState } from 'react';
 import { FiDownload } from 'react-icons/fi';
 
 interface FileDownloadProps {
-  onDownload: (port: number) => Promise<void>;
+  onDownload: (port: number, pin: number) => Promise<void>;
   isDownloading: boolean;
+  serverError: string | null;
 }
 
-export default function FileDownload({ onDownload, isDownloading }: FileDownloadProps) {
+export default function FileDownload({ onDownload, isDownloading, serverError }: FileDownloadProps) {
   const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState('');
-  
+  const [pin, setPin] = useState('');
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -22,8 +23,14 @@ export default function FileDownload({ onDownload, isDownloading }: FileDownload
       return;
     }
     
+    const pinNum = parseInt(pin.trim(), 10);
+    if (isNaN(pinNum) || pinNum < 1000 || pinNum > 9999) {
+      setError('Please enter a valid 4-digit PIN (1000–9999)');
+      return;
+    }
+    
     try {
-      await onDownload(port);
+      await onDownload(port, pinNum);
     } catch (err) {
       setError('Failed to download the file. Please check the invite code and try again.');
     }
@@ -37,7 +44,12 @@ export default function FileDownload({ onDownload, isDownloading }: FileDownload
           Enter the invite code shared with you to download the file.
         </p>
       </div>
-      
+
+      {serverError && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-sm text-red-700">{serverError}</p>
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="inviteCode" className="block text-sm font-medium text-gray-700 mb-1">
@@ -54,6 +66,23 @@ export default function FileDownload({ onDownload, isDownloading }: FileDownload
             required
           />
           {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-1">
+            Pin
+          </label>
+          <input
+            type="text"
+            id="pin"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            placeholder="Enter the pin"
+            className="input-field"
+            disabled={isDownloading}
+            required
+            maxLength={4}
+          />
         </div>
         
         <button

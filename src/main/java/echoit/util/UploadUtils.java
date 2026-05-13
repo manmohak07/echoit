@@ -13,4 +13,12 @@ public class UploadUtils {
         Random random = new Random();
         return STARTING_PORT_NO + random.nextInt(ENDING_PORT_NO - STARTING_PORT_NO + 1); // Fixed the random range calculation
     }
+
+    public static int generateRandomPin() {
+        int START = 1000;
+        int END = 9999;
+
+        Random random = new Random();
+        return START + random.nextInt(END - START);
+    }
 }

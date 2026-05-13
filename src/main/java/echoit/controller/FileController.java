@@ -31,7 +31,7 @@ public class FileController {
         }
 
          httpServer.createContext("/upload", new UploadHandler());
-         httpServer.createContext("/download", new DownloadHandler());
+         httpServer.createContext("/download", new DownloadHandler(fileSharer));
          httpServer.createContext("/", new CORSHandler());
          httpServer.setExecutor(executorService);
     }
@@ -135,8 +135,9 @@ public class FileController {
 
                 int port = fileSharer.offerFile(filePath);
                 new Thread(() -> fileSharer.startFileServer(port)).start();
+                int pin = fileSharer.getFileSession(port).getPin();
 
-                String jsonResponse = "{\"port\": " + port + "}";
+                String jsonResponse = "{\"port\": " + port + ", \"pin\": " + pin + "}";
                 headers.add("Content-Type", "application/json");
                 exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
 

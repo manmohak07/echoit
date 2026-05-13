@@ -14,7 +14,9 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<"upload" | "download">("upload");
   const [timeLeft, setTimeLeft] = useState(60);
   const [sessionExpired, setSessionExpired] = useState(false);
-
+  const [pin, setPin] = useState<number | null>(null);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+  
   // Start the countdown as soon as the backend confirms the upload (port is set)
   useEffect(() => {
     if (port === null) return;
@@ -54,6 +56,7 @@ export default function Home() {
       });
 
       setPort(response.data.port);
+      setPin(response.data.pin);
     } catch (error) {
       console.error("Error uploading file:", error);
       alert("Failed to upload file. Please try again.");
@@ -62,12 +65,13 @@ export default function Home() {
     }
   };
 
-  const handleDownload = async (port: number) => {
+  const handleDownload = async (port: number, pin: number) => {
     setIsDownloading(true);
+    setDownloadError(null);
 
     try {
       // Request download from Java backend
-      const response = await axios.get(`/api/download/${port}`, {
+      const response = await axios.get(`/api/download/${port}?pin=${pin}`, {
         responseType: "blob",
       });
 
@@ -101,11 +105,21 @@ export default function Home() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error downloading file:", error);
-      alert(
-        "Failed to download file. Please check the invite code and try again.",
-      );
+      if (error.response) {
+        const text = await (error.response.data as Blob).text();
+        try {
+          const errData = JSON.parse(text);
+          const retriesMsg = errData.retriesLeft !== undefined
+            ? ` ${errData.retriesLeft} attempt(s) remaining.` : '';
+          setDownloadError(errData.error + retriesMsg);
+        } catch {
+          setDownloadError(text || 'Download failed.');
+        }
+      } else {
+        setDownloadError('Failed to download. Check the invite code and PIN.');
+      }
     } finally {
       setIsDownloading(false);
     }
@@ -172,6 +186,7 @@ export default function Home() {
               port={port}
               timeLeft={timeLeft}
               sessionExpired={sessionExpired}
+              pin={pin}
             />
           </div>
         ) : (
@@ -179,6 +194,7 @@ export default function Home() {
             <FileDownload
               onDownload={handleDownload}
               isDownloading={isDownloading}
+              serverError={downloadError}
             />
 
             {isDownloading && (
