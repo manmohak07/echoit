@@ -27,7 +27,6 @@ public class DownloadHandler implements HttpHandler {
         }
 
         String path = exchange.getRequestURI().getPath();
-        // String portString = path.substring(path.lastIndexOf('/') + 1);
         String portString = path.substring(path.lastIndexOf('/') + 1);
 
         try {
@@ -45,24 +44,20 @@ public class DownloadHandler implements HttpHandler {
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
                     while((b = socketInput.read()) != -1) {
-                        if (b == '\n') {
-                            break;
-                        }
-
+                        if (b == '\n') break;
                         byteArrayOutputStream.write(b);
-                        String header = byteArrayOutputStream.toString().trim();
-
-                        if (header.startsWith("Filename: ")) {
-                            fileName = header.substring("Filename: ".length());
-                            //fileOutputStream.write(buffer, 0, byteRead);
-                        }
-
-                        // *IMPROVISATION* CAN USE A VARIABLE TO CHECK IF WE HAVE REACHED THE LIMIT OF 10K
-                        // AND THEN ERASE THE BUFFER SO THAT FILE EXCEEDING MORE THAN 10K IN SIZE CAN BE WRITTEN
-                        while ((byteRead = socketInput.read(buffer)) != -1) {
-                            fileOutputStream.write(buffer, 0, byteRead);
-                        }
                     }
+
+                    String header = byteArrayOutputStream.toString().trim();
+                    if (header.startsWith("Filename: ")) {
+                        fileName = header.substring("Filename: ".length());
+                        //fileOutputStream.write(buffer, 0, byteRead);
+                    }
+
+                    while ((byteRead = socketInput.read(buffer)) != -1) {
+                        fileOutputStream.write(buffer, 0, byteRead);
+                    }
+
                     headers.add("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
                     headers.add("Content-Type", "application/octet-stream");
                     exchange.sendResponseHeaders(200, temp.length());
