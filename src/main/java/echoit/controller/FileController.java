@@ -175,6 +175,8 @@ public class FileController {
                 if (start == -1) {
                     return null;
                 }
+                
+                start += fileNameMarker.length();
 
                 int end = stringData.indexOf("\"", start);
                 String fileName = stringData.substring(start, end);
